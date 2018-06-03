@@ -15,12 +15,18 @@ func test(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
+
+	log.Printf("Initializing Gonsai...")
+
 	http.HandleFunc("/", test)
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
+
+	readSpeciesJson()
+	readStylesJson()
 }
 
 func main() {
-	log.Printf("Initializing Gonsai...")
+	log.Printf("Starting web server")
 	if err := http.ListenAndServe("localhost:8080", nil); err != nil {
 		log.Fatalf("Error initializing web server: %s", err)
 	}
