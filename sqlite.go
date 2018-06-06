@@ -3,33 +3,23 @@ package main
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func openDatabase(file string) (*sql.DB, error) {
 
-	db, err := sql.Open("sqlite3", "./gonsai.db")
+	db, err := sql.Open("sqlite3", file)
 	if err != nil {
 		return nil, fmt.Errorf("Error opening database: %s", err)
 	}
 	return db, nil
 }
 
-func getBonsais() ([]GonsaiBonsai, error) {
-
-	db, err := openDatabase("./gonsai.db")
+func closeDatabase(db *sql.DB) error {
+	err := db.Close()
 	if err != nil {
-		return nil, err
+		return fmt.Errorf("Error closing database: %s", err)
 	}
-
-	//TODO Use bonsai table as a constant in other place
-	rows, err := db.Query("SELECT * from bonsais")
-	for rows.Next() {
-
-	}
-
-	rows.Close()
-
-	db.Close()
-
-	return nil, nil
+	return nil
 }
