@@ -31,9 +31,15 @@ func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 	}
 
 	rows, err := db.Query("SELECT ID,NAME,IMGPATH from " + BONSAIS)
+	if err != nil {
+		return nil, err
+	}
 	for rows.Next() {
 		var bonsai GonsaiBonsai
 		err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.imgpath)
+		if err != nil {
+			continue
+		}
 		bonsailist = append(bonsailist, bonsai)
 	}
 
