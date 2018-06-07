@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -23,6 +21,8 @@ var GonsaiBonsaiList []GonsaiBonsai
 
 func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 
+	var bonsailist []GonsaiBonsai
+
 	db, err := openDatabase("gonsai.db")
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 	for rows.Next() {
 		var bonsai GonsaiBonsai
 		err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.imgpath)
-		log.Printf("%+v", bonsai)
+		bonsailist = append(bonsailist, bonsai)
 	}
 
 	rows.Close()
@@ -41,5 +41,5 @@ func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	return bonsailist, nil
 }
