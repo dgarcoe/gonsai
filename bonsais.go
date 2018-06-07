@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -42,4 +44,33 @@ func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 	}
 
 	return bonsailist, nil
+}
+
+func getAllInfoFromBonsaiWithID(id int) (GonsaiBonsai, error) {
+
+	var bonsai GonsaiBonsai
+
+	db, err := openDatabase("gonsai.db")
+	if err != nil {
+		return bonsai, err
+	}
+
+	rows, err := db.Query("SELECT * from " + BONSAIS + " WHERE ID=" + strconv.Itoa(id))
+	if err != nil {
+		return bonsai, err
+	}
+
+	rows.Next()
+	err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price, &bonsai.imgpath)
+	rows.Close()
+	if err != nil {
+		return bonsai, err
+	}
+
+	if err := closeDatabase(db); err != nil {
+		return bonsai, err
+	}
+
+	return bonsai, nil
+
 }
