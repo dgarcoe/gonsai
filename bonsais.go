@@ -16,22 +16,22 @@ type GonsaiBonsai struct {
 	style    string
 	acquired float64
 	price    float64
+	imgpath  string
 }
 
 var GonsaiBonsaiList []GonsaiBonsai
 
-func getAllBonsais() ([]GonsaiBonsai, error) {
+func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 
 	db, err := openDatabase("gonsai.db")
 	if err != nil {
-		log.Printf("Error: %s", err)
 		return nil, err
 	}
 
-	rows, err := db.Query("SELECT * from " + BONSAIS)
+	rows, err := db.Query("SELECT ID,NAME,IMGPATH from " + BONSAIS)
 	for rows.Next() {
 		var bonsai GonsaiBonsai
-		err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price)
+		err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.imgpath)
 		log.Printf("%+v", bonsai)
 	}
 
