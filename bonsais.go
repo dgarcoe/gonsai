@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -78,5 +79,31 @@ func getAllInfoFromBonsaiWithID(id int) (GonsaiBonsai, error) {
 	}
 
 	return bonsai, nil
+
+}
+
+func addNewBonsai(bonsai GonsaiBonsai) error {
+
+	db, err := openDatabase("gonsai.db")
+	if err != nil {
+		return err
+	}
+
+	stmt, err := db.Prepare("INSERT INTO " + BONSAIS + " VALUES(?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.Exec(nil, bonsai.name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.imgpath)
+
+	id, err := res.LastInsertId()
+
+	log.Printf("%d", id)
+
+	if err := closeDatabase(db); err != nil {
+		return err
+	}
+
+	return nil
 
 }
