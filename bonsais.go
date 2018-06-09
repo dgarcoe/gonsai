@@ -22,6 +22,7 @@ type GonsaiBonsai struct {
 
 var GonsaiBonsaiList []GonsaiBonsai
 
+// Returns a list of all bonsais images and name in the database
 func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 
 	var bonsailist []GonsaiBonsai
@@ -53,6 +54,7 @@ func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 	return bonsailist, nil
 }
 
+// Returns all the information from a given bonsai provided its ID
 func getAllInfoFromBonsaiWithID(id int) (GonsaiBonsai, error) {
 
 	var bonsai GonsaiBonsai
@@ -82,6 +84,7 @@ func getAllInfoFromBonsaiWithID(id int) (GonsaiBonsai, error) {
 
 }
 
+// Inserts a new bonsai in the database
 func addNewBonsai(bonsai GonsaiBonsai) error {
 
 	db, err := openDatabase("gonsai.db")
