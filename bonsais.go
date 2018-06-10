@@ -23,11 +23,11 @@ type GonsaiBonsai struct {
 var GonsaiBonsaiList []GonsaiBonsai
 
 // Returns a list of all bonsais images and name in the database
-func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
+func getAllBonsaisWithImageAndName(databasePath string) ([]GonsaiBonsai, error) {
 
 	var bonsailist []GonsaiBonsai
 
-	db, err := openDatabase("gonsai.db")
+	db, err := openDatabase(databasePath)
 	if err != nil {
 		return nil, err
 	}
@@ -55,11 +55,11 @@ func getAllBonsaisWithImageAndName() ([]GonsaiBonsai, error) {
 }
 
 // Returns all the information from a given bonsai provided its ID
-func getAllInfoFromBonsaiWithID(id int) (GonsaiBonsai, error) {
+func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, error) {
 
 	var bonsai GonsaiBonsai
 
-	db, err := openDatabase("gonsai.db")
+	db, err := openDatabase(databasePath)
 	if err != nil {
 		return bonsai, err
 	}
@@ -85,9 +85,9 @@ func getAllInfoFromBonsaiWithID(id int) (GonsaiBonsai, error) {
 }
 
 // Inserts a new bonsai in the database
-func addNewBonsai(bonsai GonsaiBonsai) error {
+func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
 
-	db, err := openDatabase("gonsai.db")
+	db, err := openDatabase(databasePath)
 	if err != nil {
 		return err
 	}
