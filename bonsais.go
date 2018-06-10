@@ -101,7 +101,7 @@ func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
 
 	id, err := res.LastInsertId()
 
-	log.Printf("%d", id)
+	log.Printf("Added new bonsai with ID: %d", id)
 
 	if err := closeDatabase(db); err != nil {
 		return err
