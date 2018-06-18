@@ -20,6 +20,7 @@ func init() {
 
 	http.HandleFunc("/", test)
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
+	http.Handle("/bootstrap/css/", http.StripPrefix("/bootstrap/css/", http.FileServer(http.Dir("bootstrap/css"))))
 
 	readSpeciesJson()
 	readStylesJson()
@@ -27,7 +28,7 @@ func init() {
 
 func main() {
 	log.Printf("Starting web server")
-	if err := http.ListenAndServe("localhost:8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatalf("Error initializing web server: %s", err)
 	}
 }
