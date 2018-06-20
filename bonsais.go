@@ -1,7 +1,9 @@
 package main
 
 import (
+	"html/template"
 	"log"
+	"net/http"
 	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -21,6 +23,14 @@ type GonsaiBonsai struct {
 }
 
 var GonsaiBonsaiList []GonsaiBonsai
+
+func bonsaisPage(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("html/bonsais.html")
+	if err != nil {
+		log.Fatalf("Error loading index page: %s", err)
+	}
+	t.Execute(w, 0)
+}
 
 // Returns a list of all bonsais images and name in the database
 func getAllBonsaisWithImageAndName(databasePath string) ([]GonsaiBonsai, error) {
