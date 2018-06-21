@@ -20,6 +20,7 @@ func init() {
 
 	http.HandleFunc("/", mainPage)
 	http.HandleFunc("/bonsais", bonsaisPage)
+	http.HandleFunc("/pots", potsPage)
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 
 	readSpeciesJson()

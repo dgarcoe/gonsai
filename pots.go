@@ -1,7 +1,9 @@
 package main
 
 import (
+	"html/template"
 	"log"
+	"net/http"
 	"strconv"
 )
 
@@ -17,6 +19,14 @@ type GonsaiPot struct {
 }
 
 var GonsaiPotList []GonsaiPot
+
+func potsPage(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("html/pots.html")
+	if err != nil {
+		log.Fatalf("Error loading pots page: %s", err)
+	}
+	t.Execute(w, 0)
+}
 
 // Returns a list of all pots images and name in the database
 func getAllPotsWithImageAndName(databasePath string) ([]GonsaiPot, error) {

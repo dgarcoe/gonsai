@@ -27,7 +27,7 @@ var GonsaiBonsaiList []GonsaiBonsai
 func bonsaisPage(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("html/bonsais.html")
 	if err != nil {
-		log.Fatalf("Error loading index page: %s", err)
+		log.Fatalf("Error loading bonsais page: %s", err)
 	}
 	t.Execute(w, 0)
 }
