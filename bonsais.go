@@ -13,23 +13,31 @@ const BONSAIS string = "bonsais"
 
 type GonsaiBonsai struct {
 	id       int
-	name     string
+	Name     string
 	age      int
 	species  string
 	style    string
 	acquired float64
 	price    float64
-	imgpath  string
+	Imgpath  string
 }
 
 var GonsaiBonsaiList []GonsaiBonsai
 
 func bonsaisPage(w http.ResponseWriter, r *http.Request) {
+
+	//Request bonsais to the DB
+	GonsaiBonsaiList, err := getAllBonsaisWithImageAndName("./gonsai.db")
+	if err != nil {
+		log.Fatalf("Error retrieving bonsai list: %s", err)
+	}
+
 	t, err := template.ParseFiles("html/bonsais.html")
 	if err != nil {
 		log.Fatalf("Error loading bonsais page: %s", err)
 	}
-	t.Execute(w, 0)
+
+	t.Execute(w, GonsaiBonsaiList)
 }
 
 // Returns a list of all bonsais images and name in the database
@@ -48,7 +56,7 @@ func getAllBonsaisWithImageAndName(databasePath string) ([]GonsaiBonsai, error) 
 	}
 	for rows.Next() {
 		var bonsai GonsaiBonsai
-		err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.imgpath)
+		err = rows.Scan(&bonsai.id, &bonsai.Name, &bonsai.Imgpath)
 		if err != nil {
 			continue
 		}
@@ -80,7 +88,7 @@ func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, erro
 	}
 
 	rows.Next()
-	err = rows.Scan(&bonsai.id, &bonsai.name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price, &bonsai.imgpath)
+	err = rows.Scan(&bonsai.id, &bonsai.Name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price, &bonsai.Imgpath)
 	rows.Close()
 	if err != nil {
 		return bonsai, err
@@ -107,7 +115,7 @@ func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
 		return err
 	}
 
-	res, err := stmt.Exec(nil, bonsai.name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.imgpath)
+	res, err := stmt.Exec(nil, bonsai.Name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.Imgpath)
 
 	id, err := res.LastInsertId()
 
