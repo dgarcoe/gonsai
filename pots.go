@@ -11,21 +11,29 @@ const POTS string = "pots"
 
 type GonsaiPot struct {
 	id       int
-	name     string
+	Name     string
 	pottype  string
 	acquired float64
 	price    float64
-	imgpath  string
+	Imgpath  string
 }
 
 var GonsaiPotList []GonsaiPot
 
 func potsPage(w http.ResponseWriter, r *http.Request) {
+
+	//Request pots to the DB
+	GonsaiPotList, err := getAllPotsWithImageAndName("./gonsai.db")
+	if err != nil {
+		log.Fatalf("Error retrieving pot list: %s", err)
+	}
+
 	t, err := template.ParseFiles("html/pots.html")
 	if err != nil {
 		log.Fatalf("Error loading pots page: %s", err)
 	}
-	t.Execute(w, 0)
+
+	t.Execute(w, GonsaiPotList)
 }
 
 // Returns a list of all pots images and name in the database
@@ -44,7 +52,7 @@ func getAllPotsWithImageAndName(databasePath string) ([]GonsaiPot, error) {
 	}
 	for rows.Next() {
 		var pot GonsaiPot
-		err = rows.Scan(&pot.id, &pot.name, &pot.imgpath)
+		err = rows.Scan(&pot.id, &pot.Name, &pot.Imgpath)
 		if err != nil {
 			continue
 		}
@@ -76,7 +84,7 @@ func getAllInfoFromPotWithID(databasePath string, id int) (GonsaiPot, error) {
 	}
 
 	rows.Next()
-	err = rows.Scan(&pot.id, &pot.name, &pot.pottype, &pot.acquired, &pot.price, &pot.imgpath)
+	err = rows.Scan(&pot.id, &pot.Name, &pot.pottype, &pot.acquired, &pot.price, &pot.Imgpath)
 	rows.Close()
 	if err != nil {
 		return pot, err
@@ -103,7 +111,7 @@ func addNewPot(databasePath string, pot GonsaiPot) error {
 		return err
 	}
 
-	res, err := stmt.Exec(nil, pot.name, pot.pottype, pot.acquired, pot.price, pot.imgpath)
+	res, err := stmt.Exec(nil, pot.Name, pot.pottype, pot.acquired, pot.price, pot.Imgpath)
 
 	id, err := res.LastInsertId()
 
