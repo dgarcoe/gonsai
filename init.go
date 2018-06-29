@@ -34,3 +34,17 @@ func readStylesJson() {
 	json.Unmarshal(byteValue, &GonsaiStyles)
 
 }
+
+//Reads the JSON file containing the definition of types
+func readTypesJson() {
+
+	jsonTypes, err := os.Open("resources/types.json")
+	if err != nil {
+		log.Fatalf("Error reading types JSON file: %s", err)
+	}
+	defer jsonTypes.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonTypes)
+	json.Unmarshal(byteValue, &GonsaiTypes)
+
+}
