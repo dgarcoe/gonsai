@@ -15,6 +15,7 @@ type GonsaiBonsai struct {
 	id       int
 	Name     string
 	age      int
+	btype    string
 	species  string
 	style    string
 	acquired float64
@@ -22,22 +23,50 @@ type GonsaiBonsai struct {
 	Imgpath  string
 }
 
-var GonsaiBonsaiList []GonsaiBonsai
+type BonsaiPageVars struct {
+	BonsaiList []GonsaiBonsai
+	Species    []string
+	Styles     []string
+	Types      []string
+}
+
+func (b *BonsaiPageVars) setBonsaiList(list []GonsaiBonsai) {
+	b.BonsaiList = list
+}
+
+func (b *BonsaiPageVars) setBonsaiSpecies(species []string) {
+	b.Species = species
+}
+
+func (b *BonsaiPageVars) setBonsaiStyles(styles []string) {
+	b.Styles = styles
+}
+
+func (b *BonsaiPageVars) setBonsaiTypes(types []string) {
+	b.Types = types
+}
 
 func bonsaisPage(w http.ResponseWriter, r *http.Request) {
 
+	var pageVars BonsaiPageVars
+
 	//Request bonsais to the DB
-	GonsaiBonsaiList, err := getAllBonsaisWithImageAndName("./gonsai.db")
+	bonsaiList, err := getAllBonsaisWithImageAndName("./gonsai.db")
 	if err != nil {
 		log.Fatalf("Error retrieving bonsai list: %s", err)
 	}
+
+	pageVars.setBonsaiList(bonsaiList)
+	pageVars.setBonsaiSpecies(GonsaiSpecies)
+	pageVars.setBonsaiStyles(GonsaiStyles)
+	pageVars.setBonsaiTypes(GonsaiTypes)
 
 	t, err := template.ParseFiles("html/bonsais.html")
 	if err != nil {
 		log.Fatalf("Error loading bonsais page: %s", err)
 	}
 
-	t.Execute(w, GonsaiBonsaiList)
+	t.Execute(w, pageVars)
 }
 
 // Returns a list of all bonsais images and name in the database
