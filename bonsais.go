@@ -15,12 +15,12 @@ type GonsaiBonsai struct {
 	id       int
 	Name     string
 	age      int
-	btype    string
 	species  string
 	style    string
 	acquired float64
 	price    float64
 	Imgpath  string
+	btype    string
 }
 
 type BonsaiPageVars struct {
@@ -117,7 +117,7 @@ func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, erro
 	}
 
 	rows.Next()
-	err = rows.Scan(&bonsai.id, &bonsai.Name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price, &bonsai.Imgpath)
+	err = rows.Scan(&bonsai.id, &bonsai.Name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price, &bonsai.Imgpath, &bonsai.btype)
 	rows.Close()
 	if err != nil {
 		return bonsai, err
@@ -139,12 +139,12 @@ func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
 		return err
 	}
 
-	stmt, err := db.Prepare("INSERT INTO " + BONSAIS + " VALUES(?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("INSERT INTO " + BONSAIS + " VALUES(?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(nil, bonsai.Name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.Imgpath)
+	res, err := stmt.Exec(nil, bonsai.Name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.Imgpath, bonsai.btype)
 
 	id, err := res.LastInsertId()
 
