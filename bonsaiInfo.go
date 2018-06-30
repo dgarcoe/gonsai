@@ -60,3 +60,30 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, 0)
 	}
 }
+
+// Inserts a new bonsai in the database
+func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
+
+	db, err := openDatabase(databasePath)
+	if err != nil {
+		return err
+	}
+
+	stmt, err := db.Prepare("INSERT INTO " + BONSAIS + " VALUES(?,?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.Exec(nil, bonsai.Name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.Imgpath, bonsai.btype)
+
+	id, err := res.LastInsertId()
+
+	log.Printf("Added new bonsai with ID: %d", id)
+
+	if err := closeDatabase(db); err != nil {
+		return err
+	}
+
+	return nil
+
+}
