@@ -51,6 +51,7 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 		bonsai.price, _ = strconv.ParseFloat(r.Form["price"][0], 64)
 
 		log.Printf("%+v", bonsai)
+		addNewBonsai("./gonsai.db", bonsai)
 
 		t, err := template.ParseFiles("html/bonsaiInfo.html")
 		if err != nil {
