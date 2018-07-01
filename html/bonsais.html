@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script src="js/image_file.js"></script>
+    <script src="js/validate_form.js"></script>
     <script type="text/javascript" src="js/bootstrap-filestyle.min.js"> </script>
 </head>
 <body>
@@ -37,7 +38,7 @@
           <h4 class="modal-title">New bonsai</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        <form action="/bonsaiInfo" enctype="multipart/form-data" method="POST">
+        <form action="/bonsaiInfo" enctype="multipart/form-data" method="POST" name="newBonsai" id="newBonsai" novalidate>
 
         <div class="modal-body">
           <div class="container">
@@ -45,8 +46,11 @@
               <div class="col-sm-5">
 
                 <div class="col-sm-12">
-                  <div class="input-group mb-3">
-                    <input type="file" class="filestyle form-control-file border" data-btnClass="btn-success" data-text="Upload picture" id="imgInp" name="image">
+                  <div class="form-group mb-3">
+                    <input type="file" class="filestyle form-control-file border" data-btnClass="btn-success" data-text="Upload picture" id="imgInp" name="image" required>
+                    <div class="invalid-feedback">
+                      Please provide a picture for your bonsai
+                    </div>
                   </div>
                 </div>
 
@@ -61,54 +65,72 @@
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label class="control-label" for="name">Name:</label>
-                    <input type="name" class="form-control" id="name" name="name" />
+                    <input type="name" class="form-control" id="name" name="name" required/>
+                    <div class="invalid-feedback">
+                      Please provide a name for your bonsai
+                    </div>
                   </div>
                 </div>
 
                   <div class="col-sm-12">
                     <div class="form-group">
                       <label class="control-label" for="age">Age (years):</label>
-                      <input type="age" class="form-control" id="age"  name="age"/>
+                      <input type="age" class="form-control" id="age"  name="age" required>
+                      <div class="invalid-feedback">
+                        Please include the age of your bonsai
+                      </div>
                     </div>
                   </div>
 
                   <div class="col-sm-12">
                     <div class="form-group">
                       <label class="control-label" for="type">Type:</label>
-                      <select class="form-control" id="type" name="type">
+                      <select class="form-control" id="type" name="type" required>
+                        <option value="">Choose type</option>
                         {{range $index, $value := $.Types}}
                           <option>{{$value}} </option>
                         {{end}}
                       </select>
+                      <div class="invalid-feedback">
+                        Please select a type for your bonsai
+                      </div>
                     </div>
                   </div>
 
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label class="control-label" for="species">Species:</label>
-                    <select class="form-control" id="species" name="species">
+                    <select class="form-control" id="species" name="species" required>
+                      <option value="">Choose species</option>
                       {{range $index, $value := $.Species}}
                         <option>{{$value}} </option>
                       {{end}}
                     </select>
+                    <div class="invalid-feedback">
+                      Please select a species for your bonsai
+                    </div>
                   </div>
                 </div>
 
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label class="control-label" for="style">Style:</label>
-                    <select class="form-control" id="style" name="style">
+                    <select class="form-control" id="style" name="style" required>
+                      <option value="">Choose style</option>
                       {{range $index, $value := $.Styles}}
                         <option>{{$value}} </option>
                       {{end}}
                     </select>
+                    <div class="invalid-feedback">
+                      Please select a style for your bonsai
+                    </div>
                   </div>
                 </div>
 
                 <div class="col-sm-12">
                   <div class="form-group">
                     <label class="control-label" for="acquired">Acquired:</label>
-                    <input type="name" class="form-control" id="acquired" name="acquired" />
+                    <input type="name" class="form-control" id="acquired" name="acquired"/>
                   </div>
                 </div>
 
