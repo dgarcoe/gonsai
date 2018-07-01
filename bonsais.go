@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -12,15 +11,15 @@ import (
 const BONSAIS string = "bonsais"
 
 type GonsaiBonsai struct {
-	id       int
+	Id       int
 	Name     string
-	age      int
-	species  string
-	style    string
-	acquired float64
-	price    float64
+	Age      int
+	Species  string
+	Style    string
+	Acquired float64
+	Price    float64
 	Imgpath  string
-	btype    string
+	Btype    string
 }
 
 type BonsaiPageVars struct {
@@ -85,7 +84,7 @@ func getAllBonsaisWithImageAndName(databasePath string) ([]GonsaiBonsai, error) 
 	}
 	for rows.Next() {
 		var bonsai GonsaiBonsai
-		err = rows.Scan(&bonsai.id, &bonsai.Name, &bonsai.Imgpath)
+		err = rows.Scan(&bonsai.Id, &bonsai.Name, &bonsai.Imgpath)
 		if err != nil {
 			continue
 		}
@@ -99,34 +98,4 @@ func getAllBonsaisWithImageAndName(databasePath string) ([]GonsaiBonsai, error) 
 	}
 
 	return bonsailist, nil
-}
-
-// Returns all the information from a given bonsai provided its ID
-func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, error) {
-
-	var bonsai GonsaiBonsai
-
-	db, err := openDatabase(databasePath)
-	if err != nil {
-		return bonsai, err
-	}
-
-	rows, err := db.Query("SELECT * from " + BONSAIS + " WHERE ID=" + strconv.Itoa(id))
-	if err != nil {
-		return bonsai, err
-	}
-
-	rows.Next()
-	err = rows.Scan(&bonsai.id, &bonsai.Name, &bonsai.age, &bonsai.species, &bonsai.style, &bonsai.acquired, &bonsai.price, &bonsai.Imgpath, &bonsai.btype)
-	rows.Close()
-	if err != nil {
-		return bonsai, err
-	}
-
-	if err := closeDatabase(db); err != nil {
-		return bonsai, err
-	}
-
-	return bonsai, nil
-
 }

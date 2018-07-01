@@ -13,17 +13,28 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		//Load information from an already stored bonsai
+		var Bonsai GonsaiBonsai
+
+		id, err := strconv.Atoi(r.URL.Query().Get("id"))
+		if err != nil {
+			log.Printf("Error getting ID from URL: %s", err)
+		}
+
+		Bonsai, err = getAllInfoFromBonsaiWithID("./gonsai.db", id)
+		if err != nil {
+			log.Printf("Error retrieving info from database: %s", err)
+		}
 
 		t, err := template.ParseFiles("html/bonsaiInfo.html")
 		if err != nil {
 			log.Fatalf("Error loading bonsais page: %s", err)
 		}
 
-		t.Execute(w, 0)
+		t.Execute(w, Bonsai)
 
 	} else {
 		//Store information from a new bonsai and load it
-		var bonsai GonsaiBonsai
+		var Bonsai GonsaiBonsai
 
 		r.ParseMultipartForm(32 << 20)
 
@@ -33,33 +44,63 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 		}
 		defer file.Close()
 
-		bonsai.Imgpath = "/img/" + handle.Filename
+		Bonsai.Imgpath = "/img/" + handle.Filename
 
-		f, err := os.OpenFile("."+bonsai.Imgpath, os.O_WRONLY|os.O_CREATE, 0666)
+		f, err := os.OpenFile("."+Bonsai.Imgpath, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			log.Printf("Error saving image: %s", err)
 		}
 		defer f.Close()
 		io.Copy(f, file)
 
-		bonsai.Name = r.Form["name"][0]
-		bonsai.age, _ = strconv.Atoi(r.Form["age"][0])
-		bonsai.btype = r.Form["type"][0]
-		bonsai.species = r.Form["species"][0]
-		bonsai.style = r.Form["style"][0]
-		bonsai.acquired, _ = strconv.ParseFloat(r.Form["acquired"][0], 64)
-		bonsai.price, _ = strconv.ParseFloat(r.Form["price"][0], 64)
+		Bonsai.Name = r.Form["name"][0]
+		Bonsai.Age, _ = strconv.Atoi(r.Form["age"][0])
+		Bonsai.Btype = r.Form["type"][0]
+		Bonsai.Species = r.Form["species"][0]
+		Bonsai.Style = r.Form["style"][0]
+		Bonsai.Acquired, _ = strconv.ParseFloat(r.Form["acquired"][0], 64)
+		Bonsai.Price, _ = strconv.ParseFloat(r.Form["price"][0], 64)
 
-		log.Printf("%+v", bonsai)
-		addNewBonsai("./gonsai.db", bonsai)
+		log.Printf("%+v", Bonsai)
+		addNewBonsai("./gonsai.db", Bonsai)
 
 		t, err := template.ParseFiles("html/bonsaiInfo.html")
 		if err != nil {
 			log.Fatalf("Error loading bonsais page: %s", err)
 		}
 
-		t.Execute(w, 0)
+		t.Execute(w, Bonsai)
 	}
+}
+
+// Returns all the information from a given bonsai provided its ID
+func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, error) {
+
+	var bonsai GonsaiBonsai
+
+	db, err := openDatabase(databasePath)
+	if err != nil {
+		return bonsai, err
+	}
+
+	rows, err := db.Query("SELECT * from " + BONSAIS + " WHERE ID=" + strconv.Itoa(id))
+	if err != nil {
+		return bonsai, err
+	}
+
+	rows.Next()
+	err = rows.Scan(&bonsai.Id, &bonsai.Name, &bonsai.Age, &bonsai.Species, &bonsai.Style, &bonsai.Acquired, &bonsai.Price, &bonsai.Imgpath, &bonsai.Btype)
+	rows.Close()
+	if err != nil {
+		return bonsai, err
+	}
+
+	if err := closeDatabase(db); err != nil {
+		return bonsai, err
+	}
+
+	return bonsai, nil
+
 }
 
 // Inserts a new bonsai in the database
@@ -75,7 +116,7 @@ func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
 		return err
 	}
 
-	res, err := stmt.Exec(nil, bonsai.Name, bonsai.age, bonsai.species, bonsai.style, bonsai.acquired, bonsai.price, bonsai.Imgpath, bonsai.btype)
+	res, err := stmt.Exec(nil, bonsai.Name, bonsai.Age, bonsai.Species, bonsai.Style, bonsai.Acquired, bonsai.Price, bonsai.Imgpath, bonsai.Btype)
 
 	id, err := res.LastInsertId()
 

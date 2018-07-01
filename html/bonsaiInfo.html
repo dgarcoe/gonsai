@@ -25,5 +25,28 @@
     </div>
   </nav>
 
+<div class="container">
+  <div class="row top-buffer">
+    <h1 class="display-3 text-success">{{.Name}}</h1>
+
+  </div>
+  <div class="row top-buffer">
+    <div class="col-sm-4">
+      <img src={{ .Imgpath }} class="img-fluid"/>
+    </div>
+    <div class="col-sm-8">
+      <h3>Age: {{.Age}} years </h3>
+      <h3>Type: {{.Btype}}</h3>
+      <h3>Species: {{.Species}}</h3>
+      <h3>Style: {{.Style}}</h3>
+      <h3>Acquired: {{.Acquired}}</h3>
+      <h3>Price: {{.Price}}</h3>
+    </div>
+
+  </div>
+
+</div>
+
+
 
 </body>
