@@ -1,0 +1,14 @@
+version: '2'
+services:
+
+  gonsai:
+    build:
+      context: .
+      dockerfile: Dockerfile.arm
+    restart: always
+    container_name: gonsai
+    ports:
+      - "8888:8080"
+    volumes:
+      - ./gonsai.db:/app/gonsai.db
+      - ./img:/app/img

@@ -1,0 +1,13 @@
+FROM balenalib/raspberry-pi-debian-golang:latest AS build-env
+COPY src/ /src
+RUN cd /src && go get -u github.com/mattn/go-sqlite3 && go build -ldflags "-linkmode external -extldflags -static" -x -o gonsai .
+
+FROM hypriot/rpi-alpine-scratch
+WORKDIR /app
+COPY --from=build-env /src/gonsai /app/
+COPY css/ /app/css
+COPY html/ /app/html
+COPY img/ /app/img
+COPY js/ /app/js
+COPY resources /app/resources
+ENTRYPOINT ["./gonsai"]
