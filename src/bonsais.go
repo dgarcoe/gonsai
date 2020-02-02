@@ -17,7 +17,7 @@ type GonsaiBonsai struct {
 	Age      int
 	Species  string
 	Style    string
-	Acquired float64
+	Acquired string
 	Price    float64
 	Imgpath  string
 	Btype    string

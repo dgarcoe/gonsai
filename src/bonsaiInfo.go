@@ -61,7 +61,7 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 		Bonsai.Btype = r.Form["type"][0]
 		Bonsai.Species = r.Form["species"][0]
 		Bonsai.Style = r.Form["style"][0]
-		Bonsai.Acquired, _ = strconv.ParseFloat(r.Form["acquired"][0], 64)
+		Bonsai.Acquired = r.Form["acquired"][0]
 		Bonsai.Price, _ = strconv.ParseFloat(r.Form["price"][0], 64)
 
 		log.Printf("%+v", Bonsai)
