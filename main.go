@@ -21,11 +21,13 @@ func init() {
 	readSpeciesJson()
 	readStylesJson()
 	readTypesJson()
+	readEventsJson()
 
 	http.HandleFunc("/", mainPage)
 	http.HandleFunc("/bonsais", bonsaisPage)
 	http.HandleFunc("/pots", potsPage)
 	http.HandleFunc("/bonsaiInfo", bonsaiInfo)
+	http.HandleFunc("/bonsaiEvent", bonsaiEvent)
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))

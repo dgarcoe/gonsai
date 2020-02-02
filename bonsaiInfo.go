@@ -7,13 +7,27 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+
+	uuid "github.com/satori/go.uuid"
 )
+
+type BonsaiInfoPageVars struct {
+	Bonsai       GonsaiBonsai
+	BonsaiEvents []string
+}
+
+func (b *BonsaiInfoPageVars) setBonsaiEvents(events []string) {
+	b.BonsaiEvents = events
+}
 
 func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 
+	var pageVars BonsaiInfoPageVars
+	var Bonsai GonsaiBonsai
+
+	pageVars.setBonsaiEvents(GonsaiEvents)
+
 	if r.Method == "GET" {
-		//Load information from an already stored bonsai
-		var Bonsai GonsaiBonsai
 
 		id, err := strconv.Atoi(r.URL.Query().Get("id"))
 		if err != nil {
@@ -25,16 +39,7 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Error retrieving info from database: %s", err)
 		}
 
-		t, err := template.ParseFiles("html/bonsaiInfo.html")
-		if err != nil {
-			log.Fatalf("Error loading bonsais page: %s", err)
-		}
-
-		t.Execute(w, Bonsai)
-
 	} else {
-		//Store information from a new bonsai and load it
-		var Bonsai GonsaiBonsai
 
 		r.ParseMultipartForm(32 << 20)
 
@@ -63,14 +68,49 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 
 		log.Printf("%+v", Bonsai)
 		addNewBonsai("./gonsai.db", Bonsai)
-
-		t, err := template.ParseFiles("html/bonsaiInfo.html")
-		if err != nil {
-			log.Fatalf("Error loading bonsais page: %s", err)
-		}
-
-		t.Execute(w, Bonsai)
 	}
+
+	pageVars.Bonsai = Bonsai
+	t, err := template.ParseFiles("html/bonsaiInfo.html")
+	if err != nil {
+		log.Fatalf("Error loading bonsais page: %s", err)
+	}
+	t.Execute(w, pageVars)
+}
+
+func bonsaiEvent(w http.ResponseWriter, r *http.Request) {
+
+	var pageVars BonsaiInfoPageVars
+	var Bonsai GonsaiBonsai
+	var Event GonsaiEvent
+
+	pageVars.setBonsaiEvents(GonsaiEvents)
+	r.ParseMultipartForm(32 << 20)
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		log.Fatalf("Error generating UUID: %s", err)
+	}
+
+	Event.Id = id.String()
+	Event.Bonsai, _ = strconv.Atoi(r.Form["bonsaiid"][0])
+	Event.Type = r.Form["type"][0]
+	Event.Date = r.Form["date"][0]
+	Event.Comment = r.Form["comment"][0]
+
+	addNewEvent("./gonsai.db", Event)
+	Bonsai, err = getAllInfoFromBonsaiWithID("./gonsai.db", Event.Bonsai)
+	if err != nil {
+		log.Printf("Error retrieving info from database: %s", err)
+	}
+
+	t, err := template.ParseFiles("html/bonsaiInfo.html")
+	if err != nil {
+		log.Fatalf("Error loading bonsais page: %s", err)
+	}
+
+	pageVars.Bonsai = Bonsai
+	t.Execute(w, pageVars)
 }
 
 // Returns all the information from a given bonsai provided its ID
@@ -93,6 +133,20 @@ func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, erro
 	rows.Close()
 	if err != nil {
 		return bonsai, err
+	}
+
+	rows, err = db.Query("SELECT * from " + EVENTS + " WHERE BONSAIID=" + strconv.Itoa(id))
+	if err != nil {
+		return bonsai, err
+	}
+
+	for rows.Next() {
+		var event GonsaiEvent
+		err = rows.Scan(&event.Id, &event.Bonsai, &event.Type, &event.Date, &event.Comment)
+		if err != nil {
+			continue
+		}
+		bonsai.Events = append(bonsai.Events, event)
 	}
 
 	if err := closeDatabase(db); err != nil {
@@ -121,6 +175,33 @@ func addNewBonsai(databasePath string, bonsai GonsaiBonsai) error {
 	id, err := res.LastInsertId()
 
 	log.Printf("Added new bonsai with ID: %d", id)
+
+	if err := closeDatabase(db); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+// Inserts a new event in the database
+func addNewEvent(databasePath string, event GonsaiEvent) error {
+
+	db, err := openDatabase(databasePath)
+	if err != nil {
+		return err
+	}
+
+	stmt, err := db.Prepare("INSERT INTO " + EVENTS + " VALUES(?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.Exec(event.Id, event.Bonsai, event.Type, event.Date, event.Comment)
+
+	id, err := res.LastInsertId()
+
+	log.Printf("Added new event with ID: %d", id)
 
 	if err := closeDatabase(db); err != nil {
 		return err

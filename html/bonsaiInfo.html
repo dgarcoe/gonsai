@@ -9,6 +9,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
+
+<script>
+$(document).ready(function(){
+    $('#events').dataTable();
+});
+</script>
+
 <body>
   <nav class="navbar navbar-expand-sm navbar-light bg-light">
     <div class="navbar-nav">
@@ -25,28 +32,147 @@
     </div>
   </nav>
 
-<div class="container">
-  <div class="row top-buffer">
-    <h1 class="display-3 text-success">{{.Name}}</h1>
+  <!--****************************MODAL WINDOW FOR NEW EVENTS***************************-->
 
-  </div>
-  <div class="row top-buffer">
-    <div class="col-sm-4">
-      <img src={{ .Imgpath }} class="img-fluid"/>
+  <div class="modal fade" id="newEvent">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">New event</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <form action="/bonsaiEvent" enctype="multipart/form-data" method="POST" name="newEvent" id="newEvent" novalidate>
+
+          <div class="modal-body">
+            <div class="container">
+              <div class="row">
+
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <input type="hidden" class="form-control" id="bonsaiid" name="bonsaiid" value="{{.Bonsai.Id}}"/>
+                  </div>
+                </div>
+
+                  <div class="col-sm-12">
+                    <div class="form-group">
+                      <label class="control-label" for="date">Date:</label>
+                      <input type="date" class="form-control" id="date" name="date" required/>
+                      <div class="invalid-feedback">
+                        Date of the event
+                      </div>
+                    </div>
+                  </div>
+
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label class="control-label" for="type">Type:</label>
+                        <select class="form-control" id="type" name="type" required>
+                          <option value="">Choose type</option>
+                          {{range $index, $value := $.BonsaiEvents}}
+                            <option>{{$value}} </option>
+                          {{end}}
+                        </select>
+                        <div class="invalid-feedback">
+                          Please select a type for your bonsai
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-12">
+                      <div class="form-group">
+                        <label class="control-label" for="comment">Comment:</label>
+                        <textarea type="comment" class="form-control" id="comment" name="comment" rows="5"/>Enter your comment here</textarea>
+                        <div class="invalid-feedback">
+                          Enter your comment here
+                        </div>
+                      </div>
+                    </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" >Add</button>
+          </div>
+
+            </form>
+        </div>
+      </div>
     </div>
-    <div class="col-sm-8">
-      <h3>Age: {{.Age}} years </h3>
-      <h3>Type: {{.Btype}}</h3>
-      <h3>Species: {{.Species}}</h3>
-      <h3>Style: {{.Style}}</h3>
-      <h3>Acquired: {{.Acquired}}</h3>
-      <h3>Price: {{.Price}}</h3>
+  <!--****************************MAIN PAGE CONTENT***************************-->
+
+<div class="container-fluid">
+  <div class="card top-buffer">
+    <div class="card-header">
+        <h1 class="display-3 text-success">{{.Bonsai.Name}}</h1>
     </div>
+    <div class="card-body">
 
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card top-buffer">
+            <div class="card-header">
+              <h3>Info</h3>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-4">
+                  <img src={{ .Bonsai.Imgpath }} class="img-fluid"/>
+                </div>
+                <div class="col-sm-8">
+                  <h3>Age: {{.Bonsai.Age}} years </h3>
+                  <h3>Type: {{.Bonsai.Btype}}</h3>
+                  <h3>Species: {{.Bonsai.Species}}</h3>
+                  <h3>Style: {{.Bonsai.Style}}</h3>
+                  <h3>Acquired: {{.Bonsai.Acquired}}</h3>
+                  <h3>Price: {{.Bonsai.Price}}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card top-buffer">
+            <div class="card-header">
+                <h3>Diary</h3>
+            </div>
+            <div class="card-body">
+              <div class="row form-group">
+                <div class="col-sm-6">
+                  <button class="btn btn-success navbar-btn ml-auto float-left" data-toggle="modal" data-target="#newEvent" type="button">New event</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 scroll">
+                <table id="events" class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Comment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{range $.Bonsai.Events }}
+                      <tr>
+                        <td>{{.Date}}</td>
+                        <td>{{.Type}}</td>
+                        <td>{{.Comment}}</td>
+                      </tr>
+                    {{end}}
+                  </tbody>
+                </table>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
 </div>
 
-
-
 </body>
+
+</html>

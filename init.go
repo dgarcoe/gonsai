@@ -48,3 +48,17 @@ func readTypesJson() {
 	json.Unmarshal(byteValue, &GonsaiTypes)
 
 }
+
+//Reads the JSON file containing the definition of events
+func readEventsJson() {
+
+	jsonEvents, err := os.Open("resources/events.json")
+	if err != nil {
+		log.Fatalf("Error reading types JSON file: %s", err)
+	}
+	defer jsonEvents.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonEvents)
+	json.Unmarshal(byteValue, &GonsaiEvents)
+
+}

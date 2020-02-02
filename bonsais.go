@@ -9,6 +9,7 @@ import (
 )
 
 const BONSAIS string = "bonsais"
+const EVENTS string = "events"
 
 type GonsaiBonsai struct {
 	Id       int
@@ -20,6 +21,15 @@ type GonsaiBonsai struct {
 	Price    float64
 	Imgpath  string
 	Btype    string
+	Events   []GonsaiEvent
+}
+
+type GonsaiEvent struct {
+	Id      string
+	Bonsai  int
+	Type    string
+	Date    string
+	Comment string
 }
 
 type BonsaiPageVars struct {
