@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 type BonsaiInfoPageVars struct {
@@ -87,19 +85,13 @@ func bonsaiEvent(w http.ResponseWriter, r *http.Request) {
 	pageVars.setBonsaiEvents(GonsaiEvents)
 	r.ParseMultipartForm(32 << 20)
 
-	id, err := uuid.NewV4()
-	if err != nil {
-		log.Fatalf("Error generating UUID: %s", err)
-	}
-
-	Event.Id = id.String()
 	Event.Bonsai, _ = strconv.Atoi(r.Form["bonsaiid"][0])
 	Event.Type = r.Form["type"][0]
 	Event.Date = r.Form["date"][0]
 	Event.Comment = r.Form["comment"][0]
 
 	addNewEvent("./gonsai.db", Event)
-	Bonsai, err = getAllInfoFromBonsaiWithID("./gonsai.db", Event.Bonsai)
+	Bonsai, err := getAllInfoFromBonsaiWithID("./gonsai.db", Event.Bonsai)
 	if err != nil {
 		log.Printf("Error retrieving info from database: %s", err)
 	}
