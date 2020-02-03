@@ -25,4 +25,4 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v src/
+      run: go build -v src/main.go src/init.go src/bonsais.go src/bonsaiInfo.go src/data.go src/pots.go src/sqlite.go
