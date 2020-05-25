@@ -190,8 +190,16 @@ func addNewEvent(databasePath string, event GonsaiEvent) error {
 	}
 
 	res, err := stmt.Exec(event.Id, event.Bonsai, event.Type, event.Date, event.Comment)
+	
+	if err != nil {
+		return err
+	}
 
 	id, err := res.LastInsertId()
+	
+	if err != nil {
+		return err
+	}
 
 	log.Printf("Added new event with ID: %d", id)
 
