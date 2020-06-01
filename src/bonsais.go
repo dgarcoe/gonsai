@@ -25,7 +25,7 @@ type GonsaiBonsai struct {
 }
 
 type GonsaiEvent struct {
-	Id      string
+	Id      int
 	Bonsai  int
 	Type    string
 	Date    string

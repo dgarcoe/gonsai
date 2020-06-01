@@ -140,6 +140,7 @@ func getAllInfoFromBonsaiWithID(databasePath string, id int) (GonsaiBonsai, erro
 		}
 		bonsai.Events = append(bonsai.Events, event)
 	}
+	rows.Close()
 
 	if err := closeDatabase(db); err != nil {
 		return bonsai, err
@@ -189,15 +190,17 @@ func addNewEvent(databasePath string, event GonsaiEvent) error {
 		return err
 	}
 
-	res, err := stmt.Exec(event.Id, event.Bonsai, event.Type, event.Date, event.Comment)
+	res, err := stmt.Exec(nil, event.Bonsai, event.Type, event.Date, event.Comment)
 	
 	if err != nil {
+		log.Printf("%s\n",err)
 		return err
 	}
 
 	id, err := res.LastInsertId()
 	
 	if err != nil {
+		log.Printf("%s\n",err)
 		return err
 	}
 
