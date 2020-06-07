@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="js/image_file.js"></script>
+    <script src="js/validate_form.js"></script>
+    <script type="text/javascript" src="js/bootstrap-filestyle.min.js"> </script>
 </head>
 <body>
   <nav class="navbar navbar-expand-sm navbar-light bg-light">
@@ -22,22 +25,112 @@
       <a href="works" class="nav-item nav-link">Scheduled works</a>
       <a href="care" class="nav-item nav-link">Care products</a>
       <a href="species" class="nav-item nav-link">Species cards</a>
+      <button class="btn btn-success navbar-btn ml-auto" data-toggle="modal" data-target="#newPot" type="button">New pot</button>
     </div>
   </nav>
-  <div class="container-fluid">
-      <div class="row top-buffer">
-      {{range . }}
-            <div class="col-sm-2">
-              <div class="imagebox">
-                <a href="#test">
-                  <img src={{.Imgpath}} class="img-fluid"/>
-                  <span class="imagebox-desc">
-                    {{.Name}}
-                  </span>
-                </a>
+
+<!--****************************MODAL WINDOW FOR NEW POTS***************************!-->
+
+<div class="modal fade" id="newPot">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">New pot</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <form action="/potInfo" enctype="multipart/form-data" method="POST" name="newPot" id="newPot" novalidate>
+
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-5">
+
+              <div class="col-sm-12">
+                <div class="form-group mb-3">
+                  <input type="file" class="filestyle form-control-file border" data-btnClass="btn-success" data-text="Upload picture" id="imgInp" name="image" required>
+                  <div class="invalid-feedback">
+                    Please provide a picture for your pot
+                  </div>
+                </div>
               </div>
+
+              <div class="col-sm-12">
+                <img class="img-fluid" id='img-upload'/>
+              </div>
+
             </div>
-      {{end}}
+
+            <div class="col-sm-7">
+
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label class="control-label" for="name">Name:</label>
+                  <input type="name" class="form-control" id="name" name="name" required/>
+                  <div class="invalid-feedback">
+                    Please provide a name for your pot
+                  </div>
+                </div>
+              </div>
+
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label class="control-label" for="type">Type:</label>
+                    <select class="form-control" id="type" name="type" required>
+                      <option value="">Choose type</option>
+                      {{range $index, $value := $.Types}}
+                        <option>{{$value}} </option>
+                      {{end}}
+                    </select>
+                    <div class="invalid-feedback">
+                      Please select a type for your pot
+                    </div>
+                  </div>
+                </div>
+
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label class="control-label" for="acquired">Acquired:</label>
+                  <input type="date" class="form-control" id="acquired" name="acquired"/>
+                </div>
+              </div>
+
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label class="control-label" for="price">Price:</label>
+                  <input type="name" class="form-control" id="price" name="price" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success" >Add</button>
+      </div>
+
+        </form>
+    </div>
+  </div>
+</div>
+
+<!--****************************MAIN PAGE CONTENT***************************!-->
+
+<div class="container-fluid">
+  <div class="row top-buffer">
+  {{range $.PotList }}
+        <div class="col-sm-2">
+          <div class="imagebox">
+            <a href="/potInfo?id={{.Id}}">
+              <img src={{.Imgpath}} class="img-fluid"/>
+              <span class="imagebox-desc">
+                {{.Name}}
+              </span>
+            </a>
+          </div>
+        </div>
+  {{end}}
     </div>
   </div>
 </body>

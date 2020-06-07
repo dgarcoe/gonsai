@@ -49,6 +49,19 @@ func readTypesJson() {
 
 }
 
+//Reads the JSON file containing the definition of pot types
+func readPotTypesJson() {
+
+	jsonTypes, err := os.Open("resources/pot_types.json")
+	if err != nil {
+		log.Fatalf("Error reading types JSON file: %s", err)
+	}
+	defer jsonTypes.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonTypes)
+	json.Unmarshal(byteValue, &GonsaiPotTypes)
+}
+
 //Reads the JSON file containing the definition of events
 func readEventsJson() {
 
