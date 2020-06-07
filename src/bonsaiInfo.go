@@ -7,7 +7,10 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
+
+const layoutISO = "2006-01-02"
 
 type BonsaiInfoPageVars struct {
 	Bonsai       GonsaiBonsai
@@ -36,6 +39,9 @@ func bonsaiInfo(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Printf("Error retrieving info from database: %s", err)
 		}
+		
+		acquiredDateParsed, _ := time.Parse(layoutISO,Bonsai.Acquired)
+		Bonsai.Age = Bonsai.Age + diffTwoDates(acquiredDateParsed,time.Now())
 
 	} else {
 
@@ -212,4 +218,9 @@ func addNewEvent(databasePath string, event GonsaiEvent) error {
 
 	return nil
 
+}
+
+//Calculates the difference in years between two dates
+func diffTwoDates(datePrev,datePost time.Time) int {
+	return datePost.Year() - datePrev.Year()
 }
